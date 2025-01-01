@@ -1,8 +1,9 @@
 package com.example.springbootwebtutorial.springbootwebtutorial.controllers;
 
 
-import com.example.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
-import com.example.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
+import com.example.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
+
+import com.example.springbootwebtutorial.springbootwebtutorial.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,10 +12,10 @@ import java.util.List;
 @RequestMapping(path ="/employees")
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping(path = "/getSecretMessage")
@@ -24,19 +25,19 @@ public class EmployeeController {
 
     //PathVariable example
     @GetMapping(path = "/{id}")
-    public EmployeeEntity getEmployeeById(@PathVariable Long id){
-        return employeeRepository.findById(id).orElse(null);
+    public EmployeeDTO getEmployeeById(@PathVariable Long id){
+        return employeeService.findById(id);
     }
 
     //RequestParam example
     @GetMapping
-    public List<EmployeeEntity> getAllEmployees(@RequestParam(required = false,name="inputAge") Integer age,
+    public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false,name="inputAge") Integer age,
                                                 @RequestParam(required = false) String sortBy){
-        return employeeRepository.findAll();
+        return employeeService.findAll();
     }
 
     @PostMapping
-    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity employeeEntity){
-        return employeeRepository.save(employeeEntity);
+    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
+        return employeeService.save(inputEmployee);
     }
 }
