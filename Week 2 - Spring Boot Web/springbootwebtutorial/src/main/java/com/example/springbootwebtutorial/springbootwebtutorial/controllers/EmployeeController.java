@@ -4,9 +4,11 @@ package com.example.springbootwebtutorial.springbootwebtutorial.controllers;
 import com.example.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
 
 import com.example.springbootwebtutorial.springbootwebtutorial.services.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path ="/employees")
@@ -17,7 +19,6 @@ public class EmployeeController {
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
-
     @GetMapping(path = "/getSecretMessage")
     public String getMySuperSecretMessage(){
         return "Hi Sahil";
@@ -25,8 +26,12 @@ public class EmployeeController {
 
     //PathVariable example
     @GetMapping(path = "/{id}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long id){
-        return employeeService.findById(id);
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id){
+        EmployeeDTO employeeDTO = employeeService.findById(id);
+        if(employeeDTO==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(employeeDTO);
     }
 
     //RequestParam example
@@ -39,5 +44,22 @@ public class EmployeeController {
     @PostMapping
     public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
         return employeeService.save(inputEmployee);
+    }
+
+    @PutMapping("/{employeeId}")
+    public EmployeeDTO updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId){
+        return employeeService.updateEmployeeById(employeeDTO,employeeId);
+    }
+
+    @DeleteMapping("/{employeeId}")
+    public void deleteEmployeeById(@PathVariable Long employeeId){
+        employeeService.deleteEmployeeById(employeeId);
+    }
+
+    @PatchMapping("/{employeeId}")
+    public EmployeeDTO updatePartialEmployeeById(@RequestBody Map<String, Object> updates,
+                                                 @PathVariable Long employeeId){
+        return employeeService.updatePartialEmployeeById(employeeId, updates);
+
     }
 }
