@@ -40,6 +40,9 @@ public class UserServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new BadCredentialsException("User with this Id not found : "+userId));
     }
 
+    public User getUserByEmail(String userEmail){
+        return userRepository.findByEmail(userEmail).orElse(null);
+    }
     public UserDto signUp(SignUpDto signUpDto) {
         Optional<User> user = userRepository.findByEmail(signUpDto.getEmail());
         if(user.isPresent()){
@@ -54,5 +57,7 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
 
-
+    public User save(User newUser) {
+      return userRepository.save(newUser);
+    }
 }
